@@ -10,6 +10,7 @@ from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 import matplotlib.pyplot as plt
 import random
+from classifier import get_model
 
 
 def get_image_value(path, dim): # ЧТЕНИЕ И РЕСАЙЗ ИЗОБРАЖЕНИЯ
