@@ -38,12 +38,10 @@ def get_model():
     model.add(Dense(64, activation=act))
     model.add(Dense(32, activation=act))
     model.add(Dropout(drop))
+    
+    model.add(Dense(3, activation='softmax', name = 'Output_Layer'))
 
-    # СИГМОИД, Т.К ОДИН ВЫХОД
-    model.add(Dense(1, activation='sigmoid', name = 'Output_Layer'))
-
-    # БИНАРНАЯ КРОСС ЭНТРОПИЯ, Т.К ОДИН ВЫХОД
-    model.compile(loss = 'binary_crossentropy', optimizer = optimizer, metrics = ['accuracy'])
+    model.compile(loss = 'categorical_crossentropy', optimizer = optimizer, metrics = ['accuracy'])
     return model 
 
 

@@ -15,7 +15,7 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import random
-from main import get_img_array
+from classifier_train import get_img_array
 from detector import get_model
 
 
@@ -33,13 +33,9 @@ def parse_xml(fn):
         ymax = float(obj.find('bndbox').find('ymax').text) # 0 -> 1 
         bboxs.append((xmin / w, ymin / h,(xmax-xmin) / w, (ymax-ymin) / h))
     keep = True
-    if len(bboxs) == 1:
-        bboxs.append(bboxs[0]) # duplicate || zeros
-    
-    if len(bboxs) > 2 or len(bboxs) == 0:
+    if len(bboxs) != 1:
         keep = False
-
-    return bboxs, keep
+    return bboxs[0], keep
 
 def get_tts(): # get test tranin split
     DIM = (224, 224) 
@@ -51,7 +47,9 @@ def get_tts(): # get test tranin split
     try:
         with open("parsed_detector_labels.pkl", "rb") as f:
             pre_labels = pickle.load(f)
+        print("PARSED LABELS LOADED!")
     except:
+        print("GENERATING NEW PARSED LABELS")
         pre_labels = [parse_xml(f'./Detector/Annotations/{i.removesuffix(".jpg") + ".xml"}') for i in names]
         with open("parsed_detector_labels.pkl", "wb") as f:
             pickle.dump(pre_labels, f)
@@ -69,7 +67,8 @@ def get_tts(): # get test tranin split
     paths = []
     labels = []
 
-    percentage = 1.
+    percentage = .05 # выборка
+
     if percentage == 1.:
         paths = pre_paths
         labels = pre_labels
@@ -79,10 +78,12 @@ def get_tts(): # get test tranin split
                 labels.append(pre_labels[i])
                 paths.append(pre_paths[i])
     labels = np.array(labels)
-    labels = labels.reshape(labels.shape[0], 8)
+    print(labels.shape)
+    labels = labels.reshape(labels.shape[0], 4)
+    
     print("PATHS PREPARED!")
     x_train, x_test, y_train, y_test = train_test_split(paths, labels, train_size = .90, random_state = 10)
-
+    print("TRAIN DATA MIXED AND SPLITTED!")
     new_x_train = get_img_array(x_train, DIM)
     print("TRAIN ARRAY CONVERTED!")
     new_x_test = get_img_array(x_test, DIM)
@@ -109,7 +110,7 @@ if __name__ == "__main__":
     # УМЕНЬШЕНИЕ LEARNING RATE ЕСЛИ НАЧИНАЕТ ПЛОХО УЧИТЬСЯ
     lr_plat = ReduceLROnPlateau(patience = 2, mode = 'min') 
     epochs = 10000
-    batch_size = 512 # ОТНОСИТЕЛЬНОЕ КОЛИЧЕСТВО (КОЛ-ВО / САЙЗ?)
+    batch_size = 64 # ОТНОСИТЕЛЬНОЕ КОЛИЧЕСТВО (КОЛ-ВО / САЙЗ?) batch_size = number_of_images / target_images in batch
     model = get_model()
 
     x_train, x_test, y_train, y_test = get_tts()

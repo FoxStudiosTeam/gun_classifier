@@ -1,21 +1,27 @@
-from main import *
-
-
-#res = model.predict(windows)
-# NDarray -> ?????
+import classifier, detector
+import numpy as np
 import cv2
 
 DIM =  (150,150) 
 
-model = get_model()
-model.load_weights('my_model.h5')
+model = classifier.get_model()
+#model.load_weights('my_model.h5')
 # Захват видеопотока с веб-камеры
+cv2.setUseOptimized(True)
+cv2.setNumThreads(10) #change depending on your computer
 cap = cv2.VideoCapture(0)
 while True:
     # Получение текущего кадра
     ret, frame = cap.read()
     data = cv2.resize(frame, dsize =DIM, interpolation = cv2.INTER_CUBIC)
     data = np.expand_dims(data, axis=0)
+
+    #ss = cv2.ximgproc.segmentation.createSelectiveSearchSegmentation()
+    #ss.setBaseImage(frame)
+    #ss.switchToSelectiveSearchFast()
+
+    #rects = ss.process() 
+    
     #data = np.array(frame)
     #data.reshape((3, 150, 1, 1))
     

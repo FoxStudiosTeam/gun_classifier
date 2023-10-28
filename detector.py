@@ -15,7 +15,7 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import random
-from main import get_img_array
+from classifier_train import get_img_array
 
 
 def get_model():
@@ -28,12 +28,14 @@ def get_model():
     bboxHead = Dense(128, activation="relu")(flatten)
     bboxHead = Dense(64, activation="relu")(bboxHead)
     bboxHead = Dense(32, activation="relu")(bboxHead)
-    bboxHead = Dense(8, activation="sigmoid")(bboxHead)
+    bboxHead = Dense(4, activation="sigmoid")(bboxHead)
     model = Model(inputs=vgg.input, outputs=bboxHead)
 
     drop = .25
-    kernal_reg = regularizers.l1(.001)
+    kernal_reg = regularizers.l2(.001)
     optimizer = Adam(lr = .0001)
-    model.compile()
+
+
+    model.compile(loss = 'mse', optimizer = optimizer, metrics = ['accuracy'])
 
     return model
