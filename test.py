@@ -9,7 +9,6 @@ from keras.layers import Conv2D, MaxPooling2D, BatchNormalization, AveragePoolin
 from keras.optimizers import Adam
 from keras import regularizers
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
-import pandas as pd 
 import matplotlib.pyplot as plt
 import os
 import pickle
@@ -100,6 +99,7 @@ def get_img_prediction_bounding_box(path, model, dim):
     print(windows.shape)
     predictions = model.predict(windows)
     nms = non_max_suppression(locations)
+    #nms = cv2.dnn.NMSBoxes(boxes, confidences, args["confidence"], args["threshold"])
     bounding_cnt = 0
     for idx in nms:
         if np.argmax(predictions[idx]) != cat_index: 

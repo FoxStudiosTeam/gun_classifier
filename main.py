@@ -1,9 +1,8 @@
 import os
 import numpy as np 
-from keras.preprocessing import image 
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
-from skimage.segmentation import mark_boundaries
+from keras.preprocessing import image 
 from keras import regularizers
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Flatten 
@@ -27,8 +26,8 @@ def get_img_array(img_paths, dim): # ПЕРЕВОД В МАССИВ ИЗОБРА
     final_array = np.array(final_array)  
     return final_array
 
-def get_tts(): # СОЗДАНИЕ ТРЕИН ДАТЫ
-    DIM =  (150,150) 
+def get_tts(): # get test tranin split
+    DIM = (150,150) 
     np.random.seed(10)        
     o2_paths = [f'./Separated/FinalImages/other2/{i}' for i in os.listdir('./Separated/FinalImages/other2')] 
     o2_labels = [0 for i in range(len(o2_paths))]
@@ -63,10 +62,10 @@ def get_tts(): # СОЗДАНИЕ ТРЕИН ДАТЫ
     paths = []
     labels = []
 
-    percents = 0.05
+    percentage = 0.05
 
     for i in range(len(pre_labels)):
-        if random.random() < percents: #0 -> 1
+        if random.random() < percentage: #0 -> 1
             labels.append(pre_labels[i])
             paths.append(pre_paths[i])
 
