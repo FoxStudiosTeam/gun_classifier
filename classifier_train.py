@@ -17,19 +17,18 @@ from keras.utils import to_categorical
 def get_image_value(path, dim): # ЧТЕНИЕ И РЕСАЙЗ ИЗОБРАЖЕНИЯ
     img = image.load_img(path, target_size = dim)
     img = image.img_to_array(img)
-    return img / 255
+    return img
 
 def get_img_array(img_paths, dim): # ПЕРЕВОД В МАССИВ ИЗОБРАЖЕНИЙ
     final_array = []
-    from tqdm import tqdm
-    for path in tqdm(img_paths):
+    for path in img_paths:
         img = get_image_value(path, dim)
         final_array.append(img)
     final_array = np.array(final_array)
-    return final_array
+    return final_array / 255
 
 def get_tts(): # get test tranin split
-    DIM = (150,150) 
+    DIM = (150, 150)
     np.random.seed(10)        
     '''o2_paths = [f'./Separated/FinalImages/other2/{i}' for i in os.listdir('./Separated/FinalImages/other2')] 
     o2_labels = [0 for i in range(len(o2_paths))]
@@ -60,8 +59,8 @@ def get_tts(): # get test tranin split
     pistol_labels = [2 for i in range(len(pistol_paths))]
     rifle_labels = [1 for i in range(len(rifle_paths))]
     neg_labels = [0 for i in range(len(neg_paths))]
-    pre_paths = pistol_paths + rifle_paths + neg_paths# + guns_paths + o2_paths + o3_paths
-    pre_labels = pistol_labels + rifle_labels + neg_labels# + guns_labels + o2_labels + o3_labels
+    pre_paths = pistol_paths + rifle_paths + neg_paths      # + guns_paths + o2_paths + o3_paths
+    pre_labels = pistol_labels + rifle_labels + neg_labels  # + guns_labels + o2_labels + o3_labels
     paths = []
     labels = []
 
