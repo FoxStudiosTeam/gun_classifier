@@ -11,6 +11,7 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 import matplotlib.pyplot as plt
 import random
 from classifier import get_model
+from keras.utils import to_categorical
 
 
 def get_image_value(path, dim): # ЧТЕНИЕ И РЕСАЙЗ ИЗОБРАЖЕНИЯ
@@ -52,7 +53,8 @@ def get_tts(): # get test tranin split
 
     neg_paths = []
     for _, path in enumerate(os.listdir('./Separated/FinalImages/NoWeapon')):
-        neg_paths.append(f'./Separated/FinalImages/NoWeapon/{path}')
+        if random.random() < 0.02:
+            neg_paths.append(f'./Separated/FinalImages/NoWeapon/{path}')
     np.random.shuffle(neg_paths)
 
     pistol_labels = [2 for i in range(len(pistol_paths))]
@@ -79,11 +81,12 @@ def get_tts(): # get test tranin split
     print("TRAIN ARRAY CONVERTED!")
     new_x_test = get_img_array(x_test, DIM)
     print("IMAGE ARRAY CONVERTED!")
-
+    new_x_test = np.array(new_x_test)
+    new_x_train = np.array(new_x_train)
     y_train = np.array(y_train)
     y_test = np.array(y_test)
-    y_test = np.array(y_test)
-    y_train = np.array(y_train)
+    y_test = to_categorical(y_test)
+    y_train = to_categorical(y_train)
     tts = (new_x_train, new_x_test, y_train, y_test)
     return tts
 

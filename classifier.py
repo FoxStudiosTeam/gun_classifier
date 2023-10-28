@@ -44,4 +44,3 @@ def get_model():
     model.compile(loss = 'categorical_crossentropy', optimizer = optimizer, metrics = ['accuracy'])
     return model 
 
-

@@ -31,6 +31,7 @@ def parse_xml(fn):
         ymin = float(obj.find('bndbox').find('ymin').text) # 0 -> 1 
         xmax = float(obj.find('bndbox').find('xmax').text) # 0 -> 1 
         ymax = float(obj.find('bndbox').find('ymax').text) # 0 -> 1 
+        print(bboxs)
         bboxs.append((xmin / w, ymin / h,(xmax-xmin) / w, (ymax-ymin) / h))
     keep = True
     if len(bboxs) != 1:
@@ -78,7 +79,6 @@ def get_tts(): # get test tranin split
                 labels.append(pre_labels[i])
                 paths.append(pre_paths[i])
     labels = np.array(labels)
-    print(labels.shape)
     labels = labels.reshape(labels.shape[0], 4)
     
     print("PATHS PREPARED!")
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     epochs = 10000
     batch_size = 64 # ОТНОСИТЕЛЬНОЕ КОЛИЧЕСТВО (КОЛ-ВО / САЙЗ?) batch_size = number_of_images / target_images in batch
     model = get_model()
-
+    model.load_weights("detector.h5")
     x_train, x_test, y_train, y_test = get_tts()
 
     model.fit(x_train, y_train, batch_size = batch_size, epochs = epochs, callbacks = [early_stopping, model_checkpoint, lr_plat], validation_data = (x_test, y_test), verbose= 1)
