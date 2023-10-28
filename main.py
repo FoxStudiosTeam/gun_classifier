@@ -83,3 +83,20 @@ def get_tts(): # get test tranin split
     tts = (new_x_train, new_x_test, y_train, y_test)
     return tts
 
+if __name__ == "__main__":
+    # ЕСЛИ ПЕРЕСТАЕТ УЧИТЬСЯ ТО СТОПАЕМ
+    early_stopping = EarlyStopping(monitor='val_loss', verbose = 1, patience=10, min_delta = .00075)
+
+    # СОХРАНЕНИЕ ЛУЧШЕГО ПОКОЛЕНИЯ, ОЦЕНИЯВАЯ ПО val_loss
+    model_checkpoint = ModelCheckpoint('my_model.h5', verbose = 1, save_best_only=True,
+                                    monitor = 'val_loss')
+    
+    # УМЕНЬШЕНИЕ LEARNING RATE ЕСЛИ НАЧИНАЕТ ПЛОХО УЧИТЬСЯ
+    lr_plat = ReduceLROnPlateau(patience = 2, mode = 'min') 
+    epochs = 10000
+    batch_size = 512 # ОТНОСИТЕЛЬНОЕ КОЛИЧЕСТВО (КОЛ-ВО / САЙЗ?)
+    model = get_model()
+
+    x_train, x_test, y_train, y_test = get_tts()
+
+    model.fit(x_train, y_train, batch_size = batch_size, epochs = epochs, callbacks = [early_stopping, model_checkpoint, lr_plat], validation_data = (x_test, y_test), verbose= 1)
