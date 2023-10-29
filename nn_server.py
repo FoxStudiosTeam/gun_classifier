@@ -42,10 +42,10 @@ def gen_frames(camera_url):
                 # [a, b, c]
                 cv2.rectangle(frame, (startX, startY), (endX, endY), #startX+ startY+
                 (0, 255, 0), 2)
-                labels = ["Иное", "Короткоствольное", "Длинноствольное"]
+                labels = ["OTH", "SHR", "LNG"]
                 
                 pred = labels[max(enumerate(res.tolist()),key=lambda x: x[1])[0]]
-                cv2.putText(frame, f'{pred} {res.flatten().tolist()}', (startX-15, startY-15), cv2.FONT_HERSHEY_SIMPLEX, .5, (0, 255, 0), 2)
+                cv2.putText(frame, f'{pred}', (startX-15, startY-15), cv2.FONT_HERSHEY_SIMPLEX, .5, (255, 0, 0), 2)
                 
                 ret, buffer = cv2.imencode('.jpg', frame)
                 frame = buffer.tobytes()
@@ -90,7 +90,7 @@ def video_feed_4arg(camera_ip, a, b, c):
 if __name__ == '__main__':
     server_addr = "https://api.foxworld.online/neurosocket/cameras/toggle/room"
     ip = "0.0.0.0"
-    port = 25601
+    port = 25602
     ip_port = f'{ip}:{port}'
 
     requests.post(server_addr, json={

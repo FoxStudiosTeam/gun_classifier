@@ -12,7 +12,7 @@ app = Flask(__name__)
 CLASSIFIER_DIM = (150,150) 
 DETECTOR_DIM = (224,224) 
 cl_model = classifier.get_model()
-cl_model.load_weights('my_model.h5') #! CLASSIFIER.PY
+cl_model.load_weights('classifier_save2.h5') #! CLASSIFIER.PY
 dt_model = detector_v2.get_model()
 dt_model.load_weights('detector_v2_podgorelo.h5')
 
@@ -86,10 +86,8 @@ def label():
         print(f"Corrupted or missied file!")
         return {"errors": True}
     img = Image.open(file)
-    img.load()
-    background = Image.new("RGB", img.size, (255, 255, 255))
-    background.paste(img, mask=img.split()[3])
-    img = np.array(background)
+    img.convert("RGB") 
+    img = np.array(img)
 
     data = cv2.resize(img, dsize = DETECTOR_DIM, interpolation = cv2.INTER_CUBIC)
     data = np.expand_dims(data, axis=0)
@@ -117,7 +115,7 @@ def label():
 
         labels = ["Иное", "Короткоствольное", "Длинноствольное"]
         
-        return {"errors": False, "raw": res.flatten().tolist(), "prediction": labels[max(enumerate(res.tolist()),key=lambda x: x[1])[0]]}
+        return {"errors": False, "raw": res.flatten().tolist(), "prediction": labels[max(enumerate(res[0].tolist()),key=lambda x: x[1])[0]]}
         
     except:
         return {"errors": True}

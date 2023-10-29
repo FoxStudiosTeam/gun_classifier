@@ -3,6 +3,7 @@ import numpy as np
 import os
 import classifier, detector, detector_v2
 from classifier_train import get_img_array
+
 CLASSIFIER_DIM = (150,150) 
 DETECTOR_DIM = (224,224) 
 cl_model = classifier.get_model()
@@ -31,9 +32,8 @@ for path in paths:
 
     
     # show the output image
-    
 
-    cutted_image = image.copy()[startY:endY+1, startX:endX+1] # startY+ startX+
+    cutted_image = image.copy()[startY:endY+1, startX:endX+1]
     if sum(cutted_image.shape[:3]) != 0:
         data = cv2.resize(cutted_image, dsize = CLASSIFIER_DIM, interpolation = cv2.INTER_CUBIC)
         data = np.expand_dims(data, axis=0) / 255
