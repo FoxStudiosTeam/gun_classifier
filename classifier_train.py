@@ -52,7 +52,7 @@ def get_tts(): # get test tranin split
 
     neg_paths = []
     for _, path in enumerate(os.listdir('./Separated/FinalImages/NoWeapon')):
-        if random.random() < 0.02:
+        if random.random() < 0.01:
             neg_paths.append(f'./Separated/FinalImages/NoWeapon/{path}')
     np.random.shuffle(neg_paths)
 
@@ -94,7 +94,9 @@ if __name__ == "__main__":
     early_stopping = EarlyStopping(monitor='val_loss', verbose = 1, patience=10, min_delta = .00075)
 
     # СОХРАНЕНИЕ ЛУЧШЕГО ПОКОЛЕНИЯ, ОЦЕНИЯВАЯ ПО val_loss
-    model_checkpoint = ModelCheckpoint('my_model.h5', verbose = 1, save_best_only=True,
+
+    #
+    model_checkpoint = ModelCheckpoint('classifier_save2.h5', verbose = 1, save_best_only=True,
                                     monitor = 'val_loss')
     
     # УМЕНЬШЕНИЕ LEARNING RATE ЕСЛИ НАЧИНАЕТ ПЛОХО УЧИТЬСЯ

@@ -1,8 +1,5 @@
 import os
 import numpy as np 
-from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt
-from keras.preprocessing import image 
 from keras import regularizers
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Flatten 

@@ -163,3 +163,5 @@ Tests
 Separated
 Detector
 todo
+.vscode
+train_dataset_dataset

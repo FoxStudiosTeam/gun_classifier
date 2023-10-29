@@ -1,6 +1,19 @@
-import tensorflow as tf
-print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
-gpus = tf.config.experimental.list_physical_devices('GPU')
-if gpus:
-    # Выберите GPU (например, первый GPU)
-    tf.config.experimental.set_visible_devices(gpus[0], 'GPU')
+from flask import Flask, render_template, Response
+import cv2
+import numpy as np
+import requests
+import socket
+
+
+app = Flask(__name__)
+
+@app.route('/test')
+def test():
+    return {0: 0}
+
+
+if __name__ == '__main__':
+    IP = requests.get('https://api.ipify.org/').text
+    
+    app.run(host="0.0.0.0", port=1001)
+    print(IP)

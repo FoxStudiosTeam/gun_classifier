@@ -1,16 +1,17 @@
+import flask
 from flask import Flask, render_template, Response
 import cv2
 import numpy as np
 import requests
 import socket
-
+from flask import request
 app = Flask(__name__)
 camera = cv2.VideoCapture(0)
 
 
 def gen_frames():
     while True:
-        success, frame = camera.read()        
+        success, frame = camera.read()
         if not success:
             break
         else:
@@ -27,20 +28,25 @@ def video_feed():
 
 if __name__ == '__main__':
     server_addr = "https://api.foxworld.online/neurosocket/cameras/toggle"
-    
+    ip = "0.0.0.0"
+    port = 6000
+    IP = requests.get('https://api.ipify.org/').text
+    ip_port = f'{IP}:{port}/video_capture'
     requests.post(server_addr, json={
-        "room":"uuid",
-        "cam_code":"uuid",
-        "status":"up",
-        "ip": f'{socket.gethostbyname(socket.gethostname())}'
+        "room": "foxwatch1",
+        "cam_code": "камера 1",
+        "status": "up",
+        # "ip": f'{socket.gethostbyname(socket.gethostname())}'
+        "ip": ip_port
     })
 
-    app.run(debug=True)
+    # app.run(debug=True, host=ip, port=port)
+    app.run(host=ip, port=port)
     print("print!")
 
     requests.post(server_addr, json={
-        "room":"uuid",
-        "cam_code":"uuid",
-        "status":"down",
-        "ip": f'{socket.gethostbyname(socket.gethostname())}'
+        "room": "foxwatch1",
+        "cam_code": "камера 1",
+        "status": "down",
+        "ip": ip_port
     })

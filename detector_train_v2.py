@@ -5,6 +5,7 @@ from keras.layers import Input
 from keras.models import Model
 from keras.optimizers import Adam
 from keras.preprocessing.image import img_to_array
+from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 from keras.preprocessing.image import load_img
 from sklearn.model_selection import train_test_split
 import xml.etree.ElementTree as ET
@@ -40,13 +41,12 @@ def parse_xml(fn):
     return bboxs[0], keep
 # loop over the rows
 
-names = os.listdir('./Detector/JPEGImages/')
+names = [i for i in os.listdir('./Detector/JPEGImages/') if random.random() < 0.13]
 
-
-
+length = len(names)
 for filename in tqdm(names):#tqdm():
     # break the row into the filename and bounding box coordinates
-    if random.random() > 0.1: continue
+    
     (startX, startY, endX, endY), keep = parse_xml("./Detector/Annotations/" + filename.replace(".jpg", ".xml"))
     if not keep: continue
     # derive the path to the input image, load the image (in OpenCV
@@ -110,6 +110,10 @@ model = Model(inputs=vgg.input, outputs=bboxHead)
 # initialize the optimizer, compile the model, and show the model
 # summary
 opt = Adam(lr=1e-4)
+model_checkpoint = ModelCheckpoint('detector_v2.h5', verbose = 1, save_best_only=True,
+                                    monitor = 'val_loss')
+lr_plat = ReduceLROnPlateau(patience = 2, mode = 'min') 
+early_stopping = EarlyStopping(monitor='val_loss', verbose = 1, patience=10, min_delta = .00075)
 model.compile(loss="mse", optimizer=opt)
 print(model.summary())
 # train the network for bounding box regression
@@ -117,31 +121,11 @@ print("[INFO] training bounding box regressor...")
 H = model.fit(
 	trainImages, trainTargets,
 	validation_data=(testImages, testTargets),
-	batch_size=32,
-	epochs=25,
+    callbacks = [early_stopping, model_checkpoint, lr_plat],
+	batch_size = int(length / 24),
+	epochs = 500,
 	verbose=1)
 # serialize the model to disk
 print("[INFO] saving object detector model...")
 model.save("detector_v2.h5", save_format="h5")
 # plot the model training history
-N = 25
-plt.style.use("ggplot")
-plt.figure()
-plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
-plt.plot(np.arange(0, N), H.history["val_loss"], label="val_loss")
-plt.title("Bounding Box Regression Loss on Training Set")
-plt.xlabel("Epoch #")
-plt.ylabel("Loss")
-plt.legend(loc="lower left")
-plt.savefig("out")
-
-
-
-'''
-
-
-
-
-
-
-'''
